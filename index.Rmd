@@ -34,7 +34,7 @@ Acesse: [Ailton Machado](info/index.html){target="_blank"}
 
 # Visão geral sobre os relatórios {.tabset .tabset-fade}
 
-Este projeto está disponível em <https://github.com/bendeivide/profmatma41.git>.
+Este projeto está disponível em <https://github.com/ailtonmachado/profmatma41.git>.
 
 ## O que é necessário?
 
