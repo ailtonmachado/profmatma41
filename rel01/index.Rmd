@@ -1,7 +1,7 @@
 ---
-title: "Relatório 01 - Introdução ao R"
+title: "Relatório 01 - Criação e Publicação da Página Web"
 author: "Ailton Machado"
-date: "15/08/2026"
+date: "22/08/2026"
 header-includes:
   - \usepackage{titling}
   - \pretitle{\begin{center}
@@ -30,24 +30,323 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Objetivo
 
-Descrever as ideias básicas sobre o ambiente R:
-
-- Como instalar o R e RStudio;
-- Diferenças entre o R e a IDE RStudio;
-- Como o R trabalha;
-- Comandos elementares;
-- Objetos;
-- Manipulação com objetos;
-- Importação de dados;
-- Pacotes:
-  - Instalação;
-  - Como usar.
+Descrever detalhadamente o processo de criação, configuração, sincronização e publicação da página web destinada aos relatórios da disciplina MA 41 - Estatística e Probabilidade (PROFMAT), utilizando R, RStudio, Git e GitHub Pages.
 
 # Apresentação do relatório
 
-Diante do objetivo do relatório, apresentaremos nas próximas subseções, os pontos a serem discutidos.
+Neste relatório serão apresentadas as etapas realizadas desde a preparação do ambiente computacional até a publicação da página na internet, registrando os principais procedimentos utilizados na integração entre RStudio, Git e GitHub.
 
-## Como instalar o R e o RStudio
+## Instalação do R
+
+O primeiro passo foi realizar a instalação do **R**, linguagem e ambiente computacional utilizado para análise estatística e execução dos códigos necessários ao projeto.
+
+Para isso, foi acessado o site oficial do CRAN e realizada a instalação da versão do R disponível para o sistema operacional Windows. Após a instalação, o funcionamento foi verificado através do RStudio, que reconheceu corretamente a versão instalada.
+
+No computador utilizado neste trabalho foi instalada a versão **R 4.6.1**.
+
+## Instalação do RStudio
+
+Após a instalação do R, foi realizada a instalação do **RStudio**, ambiente integrado de desenvolvimento utilizado para facilitar a criação, edição e execução dos arquivos do projeto.
+
+O RStudio foi instalado em sua versão para Windows. Após a instalação, o programa foi aberto e reconheceu corretamente o R instalado anteriormente, permitindo o acesso ao Console, Terminal, editor de arquivos e demais ferramentas necessárias para o desenvolvimento do projeto.
+
+Durante o trabalho foi utilizada a versão **RStudio 2026.08.0**.
+
+## Instalação do RTools
+
+Após a instalação do R e do RStudio, foi realizada a instalação do **RTools**, conjunto de ferramentas utilizado no Windows para dar suporte à compilação de pacotes do R que necessitam de código-fonte em C, C++ ou Fortran.
+
+Como estava sendo utilizada a versão **R 4.6.1**, foi instalado o **RTools45**, seguindo a instalação padrão indicada pelo próprio projeto R.
+
+A instalação foi mantida no diretório padrão sugerido pelo instalador, não sendo necessária nenhuma configuração adicional para o funcionamento no RStudio.
+
+## Instalação do Git
+
+Em seguida, foi realizada a instalação do **Git**, sistema de controle de versões utilizado para registrar as alterações realizadas no projeto e permitir sua sincronização com o GitHub.
+
+Foi instalada a versão do Git para Windows de 64 bits. Durante a instalação, foram mantidas as opções padrão sugeridas pelo instalador.
+
+Após a instalação, foi verificado o funcionamento do **Git Bash**, terminal utilizado posteriormente dentro do RStudio para execução dos comandos Git.
+
+## Configuração do Git Bash no RStudio
+
+Após a instalação do Git, o terminal padrão do RStudio foi configurado para utilizar o **Git Bash**.
+
+No RStudio, foi acessado o caminho:
+
+**Tools → Global Options → Terminal**
+
+Na opção referente ao shell utilizado pelos novos terminais, foi selecionado o **Git Bash**.
+
+Após aplicar a configuração, foi aberto um novo terminal no RStudio. O funcionamento foi confirmado pela identificação **MINGW64**, indicando que o Git Bash estava ativo e pronto para executar comandos Git diretamente dentro do RStudio.
+
+## Configuração da conta no GitHub
+
+Para hospedar o projeto e posteriormente disponibilizar a página na internet, foi utilizada uma conta na plataforma **GitHub**.
+
+A conta foi configurada com o nome de usuário **ailtonmachado**, que passou a identificar tanto o repositório do projeto quanto o endereço utilizado posteriormente para publicação da página através do GitHub Pages.
+
+O GitHub foi utilizado como repositório remoto, permitindo armazenar na internet os arquivos que inicialmente estavam apenas no computador local.
+
+## Instalação dos pacotes necessários
+
+Para realizar a construção, renderização e sincronização do projeto, foi necessário instalar alguns pacotes no R.
+
+Entre os principais pacotes utilizados estão:
+
+- `usethis`, para auxiliar na configuração e integração do projeto com o GitHub;
+- `gitcreds`, para gerenciamento das credenciais de acesso;
+- `rmarkdown`, para criação e renderização dos arquivos em R Markdown;
+- `knitr`, utilizado no processo de compilação dos documentos;
+- `bookdown`, utilizado na estrutura dos relatórios;
+- `postcards`, utilizado na página de informações pessoais.
+
+A instalação desses pacotes foi realizada diretamente pelo Console do RStudio.
+
+## Configuração do Git no RStudio
+
+Para identificar corretamente os registros realizados no projeto, foi necessário configurar o nome de usuário e o endereço de e-mail utilizados pelo Git.
+
+Essa configuração foi realizada no Console do RStudio por meio do pacote `usethis`, utilizando o comando:
+
+```{r, eval=FALSE}
+usethis::use_git_config(
+  user.name = "ailtonmachado",
+  user.email = "itoadv7@gmail.com"
+)
+´´´
+## Criação do token de acesso ao GitHub
+
+Para permitir a autenticação entre o RStudio e o GitHub, foi criado um **Personal Access Token (PAT)**.
+
+No Console do RStudio, foi utilizado o comando:
+
+```{r, eval=FALSE}
+usethis::create_github_token()
+```
+
+Esse comando direcionou para a página do GitHub responsável pela criação do token. Após a geração, o token foi copiado e armazenado no computador por meio do pacote `gitcreds`, utilizando:
+
+```{r, eval=FALSE}
+gitcreds::gitcreds_set()
+```
+
+Após esse procedimento, o RStudio passou a reconhecer as credenciais necessárias para realizar a comunicação com a conta do GitHub.
+
+## Criação do projeto profmatma41
+
+Para organizar os arquivos do trabalho, foi criado no RStudio um novo projeto chamado **profmatma41**.
+
+No RStudio, foi seguido o caminho:
+
+**File → New Project → New Directory → New Project**
+
+No campo destinado ao nome do diretório foi informado:
+
+```text
+profmatma41
+```
+
+Como diretório principal foi utilizada a pasta:
+
+```text
+C:/relatorios
+```
+
+Também foi marcada a opção **Create a git repository**, permitindo que o projeto já fosse criado com um repositório Git local associado.
+
+Após a criação, o projeto passou a ser armazenado em:
+
+```text
+C:/relatorios/profmatma41
+```
+
+e passou a ser aberto pelo arquivo:
+
+```text
+profmatma41.Rproj
+```
+
+## Download e utilização do modelo fornecido
+
+O modelo utilizado para a construção da página foi disponibilizado pelo professor em um repositório no GitHub.
+
+O repositório foi acessado e o projeto foi baixado em formato **ZIP**. Após o download, o arquivo foi descompactado no computador.
+
+Em seguida, os arquivos e diretórios do modelo foram copiados para dentro do projeto `profmatma41`, preservando a estrutura fornecida pelo professor.
+
+Foram copiados, entre outros, os seguintes elementos:
+
+- `imagens`;
+- `info`;
+- `rel01`;
+- `rel02`;
+- `rel03`;
+- `relXX`;
+- `suporte`;
+- `index.Rmd`;
+- `index.html`;
+- `.gitignore`;
+- `logo.html`.
+
+O arquivo `.Rproj` presente no modelo não foi utilizado, pois o projeto já havia sido criado anteriormente no RStudio com o arquivo próprio:
+
+```text
+profmatma41.Rproj
+```
+
+Dessa forma, foi mantida a estrutura do modelo fornecido, mas utilizando o projeto criado localmente.
+
+## Estrutura e personalização do projeto
+
+Após inserir os arquivos do modelo, foi feita a organização e personalização do projeto.
+
+Na raiz do projeto, o arquivo `index.Rmd` foi utilizado como página principal. Nele foram alteradas informações de identificação, como o nome do aluno e o endereço do repositório no GitHub.
+
+Também foi personalizada a página localizada no diretório `info`, que contém informações básicas do aluno.
+
+Entre as alterações realizadas estão:
+
+- nome do aluno: **Ailton Machado**;
+- identificação como aluno do PROFMAT;
+- link para o perfil do GitHub;
+- link para contato por e-mail;
+- endereço do repositório do projeto.
+
+O repositório utilizado passou a ser:
+
+```text
+https://github.com/ailtonmachado/profmatma41
+```
+
+e a estrutura principal do projeto ficou organizada em diretórios específicos para informações, imagens e relatórios.
+
+Essa organização permite que cada relatório seja desenvolvido em seu próprio diretório, mantendo a página principal como ponto de acesso aos trabalhos da disciplina.
+
+## Renderização dos arquivos R Markdown
+
+Após a personalização dos arquivos do projeto, foi necessário realizar a renderização dos documentos escritos em **R Markdown**.
+
+Os arquivos com extensão `.Rmd` contêm o conteúdo editável do projeto. Para que esse conteúdo pudesse ser visualizado como página web, foi utilizado o botão **Knit** do RStudio.
+
+Ao executar o Knit, o conteúdo do arquivo `.Rmd` foi processado e convertido para um arquivo `.html`.
+
+Esse procedimento foi realizado tanto na página principal quanto nas páginas internas do projeto. Dessa forma, as alterações feitas no R Markdown passaram a ser refletidas nos arquivos HTML utilizados pelo GitHub Pages.
+
+Durante o processo, a visualização do resultado foi configurada para aparecer no **Viewer Pane** do próprio RStudio, facilitando a conferência do conteúdo antes de enviá-lo ao GitHub.
+
+## Adição dos arquivos ao Git
+
+Após a preparação e renderização dos arquivos, foi iniciada a etapa de controle de versão do projeto utilizando o Git.
+
+No Terminal do RStudio, foi utilizado inicialmente o comando:
+
+```bash
+git status
+```
+
+Esse comando permitiu verificar quais arquivos ainda não estavam sendo acompanhados pelo Git ou haviam sofrido alterações.
+
+Em seguida, todos os arquivos do projeto foram adicionados à área de preparação do Git por meio do comando:
+
+```bash
+git add .
+```
+
+Após esse procedimento, foi executado novamente:
+
+```bash
+git status
+```
+
+para confirmar que os arquivos estavam prontos para serem registrados no primeiro commit.
+
+Durante a execução do comando `git add .`, apareceram avisos relacionados à conversão de finais de linha entre os formatos LF e CRLF, característica comum em ambientes Windows. Esses avisos não impediram a continuidade do procedimento.
+
+## Realização do primeiro commit
+
+Após adicionar os arquivos à área de preparação do Git, foi realizado o primeiro commit do projeto.
+
+O commit funciona como um registro das alterações realizadas até aquele momento, permitindo manter um histórico das versões do projeto.
+
+No Terminal do RStudio, foi utilizado o comando:
+
+```bash
+git commit -m "Initial commit"
+```
+
+A mensagem `"Initial commit"` foi utilizada para identificar o primeiro registro do projeto.
+
+Após a execução, foi utilizado novamente:
+
+```bash
+git status
+```
+
+e o Git informou que não havia alterações pendentes, indicando que os arquivos haviam sido registrados corretamente no repositório local.
+
+## Sincronização com o GitHub
+
+Após a criação do primeiro commit, o projeto local foi conectado a um repositório remoto no GitHub.
+
+No Console do RStudio, foi utilizado o comando:
+
+```{r, eval=FALSE}
+usethis::use_github()
+```
+
+Esse comando utilizou as credenciais configuradas anteriormente, criou o repositório remoto correspondente ao projeto e realizou a primeira sincronização dos arquivos.
+
+O repositório criado foi:
+
+```text
+https://github.com/ailtonmachado/profmatma41
+```
+
+Após a sincronização, foi possível visualizar no GitHub os arquivos que anteriormente estavam apenas no computador local.
+
+O repositório remoto passou a funcionar como cópia sincronizada do projeto desenvolvido no RStudio.
+
+## Publicação utilizando GitHub Pages
+
+Após a sincronização do projeto com o GitHub, foi realizada a publicação da página utilizando o **GitHub Pages**.
+
+No repositório `profmatma41`, foi acessado o caminho:
+
+**Settings → Pages**
+
+Na seção de publicação, foi selecionada a opção:
+
+- **Source:** Deploy from a branch;
+- **Branch:** `master`;
+- **Folder:** `/(root)`.
+
+Após salvar essa configuração, o GitHub iniciou o processo de publicação da página.
+
+Em seguida, foi verificada a seção de **Deployments**, onde foi possível confirmar que a publicação havia sido concluída com sucesso.
+
+A página ficou disponível no endereço:
+
+```text
+https://ailtonmachado.github.io/profmatma41/
+```
+
+Esse endereço passou a funcionar como página principal de acesso aos relatórios da disciplina, incluindo o Relatório 01.
+
+# Considerações finais
+
+A construção e publicação da página permitiu compreender, na prática, a integração entre **R**, **RStudio**, **Git** e **GitHub**.
+
+O processo envolveu desde a preparação do ambiente computacional e configuração das ferramentas até a criação do projeto, renderização dos arquivos em R Markdown, controle de versões e publicação da página por meio do GitHub Pages.
+
+Além da publicação inicial, o procedimento estabeleceu uma rotina para futuras atualizações dos relatórios. Sempre que houver alterações no projeto, os arquivos poderão ser novamente renderizados e sincronizados com o GitHub.
+
+A rotina básica de atualização utiliza os comandos:
+
+```bash
+git add .
+git commit -m "Descrição da alteração"
+git push
 
 
 
