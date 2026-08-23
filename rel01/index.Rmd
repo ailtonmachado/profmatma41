@@ -1,6 +1,6 @@
 ---
 title: "Relatório 01 - Criação e Publicação da Página Web"
-author: "Ailton Machado"
+author: "Ailton Gomes da Silva Machado"
 date: "22/08/2026"
 header-includes:
   - \usepackage{titling}
