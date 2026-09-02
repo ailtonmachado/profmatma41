@@ -1,25 +1,26 @@
 ---
-title: "Relatório 02 - Como usar o projeto Relatórios"
-author: "Ben Dêivide"
-date: "12/04/2022"
-header-includes:
-  - \usepackage{titling}
-  - \pretitle{\begin{center}
-    \includegraphics[width=2in,height=2in]{ufsj.png}\LARGE\\}
-  - \posttitle{\end{center}}
-toc-title: "Sumário"
+title: "Relatório 02 - Análise Estatística de Dados Escolares"
+author: "Ailton Machado"
+date: "01/09/2026"
 output:
-  bookdown::html_document2: 
+  html_document:
+    toc: true
+    df_print: paged
+  bookdown::html_document2:
     theme: journal
     highlight: tango
-    toc: yes
-    number_sections: yes
+    toc: true
+    number_sections: true
     includes:
       in_header: logo.html
   pdf_document:
-    
-    toc: yes
-    number_sections: yes
+    toc: true
+    number_sections: true
+toc-title: Sumário
+header-includes:
+- \usepackage{titling}
+- \pretitle{\begin{center} \includegraphics[width=2in,height=2in]{ufsj.png}\LARGE\\}
+- \posttitle{\end{center}}
 ---
 
 ```{r setup, include=FALSE}
@@ -29,9 +30,691 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Objetivo
 
-Descrever como realizar os relatórios.
+Realizar uma análise estatística de um banco de dados contendo informações de 1000 alunos de uma escola pública, explorando variáveis relacionadas ao desempenho acadêmico, frequência escolar e características sociofamiliares.
 
-# Apresentação do relatório
+# Importação dos dados
 
-Aqui será o local para apresentar o material sobre o relatório.
+O banco de dados utilizado contém informações sobre faltas, nota média, turno de estudo, escolaridade da mãe e acesso à internet.
 
+```{r}
+dados_alunos <- read.table(
+  file = "dados_alunos.csv",
+  header = TRUE,
+  sep = ";",
+  dec = ",",
+  stringsAsFactors = FALSE
+)
+```
+## Verificação do banco de dados
+
+```{r}
+head(dados_alunos)
+dim(dados_alunos)
+str(dados_alunos)
+```
+# Preparação das variáveis
+
+As variáveis qualitativas foram convertidas para fatores, respeitando a natureza nominal ou ordinal de cada uma.
+
+```{r}
+dados_alunos$turno <- factor(dados_alunos$turno)
+
+dados_alunos$acesso_internet <- factor(dados_alunos$acesso_internet)
+
+dados_alunos$escolaridade_mae <- factor(
+  dados_alunos$escolaridade_mae,
+  levels = c("Fundamental", "Médio", "Superior"),
+  ordered = TRUE
+)
+```
+```{r}
+str(dados_alunos)
+```
+# Análise univariada
+
+Nesta etapa, cada variável do banco de dados será analisada individualmente, utilizando medidas-resumo e representações gráficas adequadas ao seu tipo.
+
+## Número de faltas
+
+A variável `faltas` é quantitativa discreta e representa o número de ausências de cada aluno ao longo do período considerado.
+
+```{r}
+summary(dados_alunos$faltas)
+
+mean(dados_alunos$faltas)
+
+median(dados_alunos$faltas)
+
+sd(dados_alunos$faltas)
+```
+
+Para visualizar a distribuição do número de faltas, foi construído um histograma.
+
+```{r}
+hist(
+  dados_alunos$faltas,
+  main = "Distribuição do número de faltas",
+  xlab = "Número de faltas"
+)
+```
+
+Também foi utilizado um boxplot para observar a distribuição e a possível presença de valores atípicos.
+
+```{r}
+boxplot(
+  dados_alunos$faltas,
+  main = "Distribuição do número de faltas",
+  ylab = "Número de faltas"
+)
+```
+
+
+### Interpretação
+
+O número médio de faltas dos alunos foi de aproximadamente **8,01**, valor muito próximo da mediana, que foi igual a **8**. Isso indica que o número típico de faltas dos estudantes está em torno de oito ausências.
+
+O primeiro quartil foi igual a **6** e o terceiro quartil igual a **10**, indicando que aproximadamente 50% dos alunos apresentaram entre 6 e 10 faltas.
+
+O desvio-padrão foi de aproximadamente **2,80**, mostrando uma dispersão moderada em torno da média.
+
+O histograma mostra maior concentração dos alunos nas faixas intermediárias de faltas. O boxplot indica ainda a presença de alguns valores elevados que podem ser considerados atípicos, próximos de 17 e 19 faltas.
+
+## Nota média
+
+A variável `nota_media` é quantitativa contínua e representa o desempenho acadêmico médio de cada aluno.
+
+```{r}
+summary(dados_alunos$nota_media)
+
+mean(dados_alunos$nota_media)
+
+median(dados_alunos$nota_media)
+
+sd(dados_alunos$nota_media)
+```
+
+Para visualizar a distribuição das notas médias, foi construído um histograma.
+
+```{r}
+hist(
+  dados_alunos$nota_media,
+  main = "Distribuição das notas médias",
+  xlab = "Nota média"
+)
+```
+
+Também foi construído um boxplot para analisar a distribuição das notas e identificar possíveis valores atípicos.
+
+```{r}
+boxplot(
+  dados_alunos$nota_media,
+  main = "Distribuição das notas médias",
+  ylab = "Nota média"
+)
+```
+
+### Interpretação
+
+A nota média dos alunos foi de aproximadamente **6,44**, enquanto a mediana foi igual a **6,5**. A proximidade entre essas duas medidas indica que o desempenho dos estudantes está concentrado em torno desse valor.
+
+O primeiro quartil foi **5,2** e o terceiro quartil **7,7**, indicando que aproximadamente 50% dos alunos apresentaram notas entre 5,2 e 7,7.
+
+O desvio-padrão foi de aproximadamente **1,88**, mostrando uma dispersão considerável das notas em relação à média.
+
+O histograma mostra maior concentração das notas na região entre aproximadamente 5 e 8 pontos. O boxplot evidencia ainda alguns valores baixos considerados atípicos, próximos de 1 ponto ou inferiores. Não foram observados valores atípicos elevados.
+
+## Turno de estudo
+
+A variável `turno` é qualitativa nominal e possui as categorias Matutino, Vespertino e Noturno.
+
+```{r}
+table(dados_alunos$turno)
+round(prop.table(table(dados_alunos$turno)) * 100, 2)
+```
+
+```{r}
+barplot(
+  table(dados_alunos$turno),
+  main = "Distribuição dos alunos por turno",
+  xlab = "Turno",
+  ylab = "Número de alunos"
+)
+```
+
+### Interpretação
+
+Dos 1000 alunos analisados, 451 (45,1%) estudam no turno Matutino, 345 (34,5%) no Vespertino e 204 (20,4%) no Noturno. Dessa forma, o turno Matutino apresenta a maior participação no banco de dados, enquanto o Noturno possui o menor número de alunos.
+
+## Escolaridade da mãe
+
+A variável `escolaridade_mae` é qualitativa ordinal, pois suas categorias apresentam uma ordem natural: Fundamental, Médio e Superior.
+
+```{r}
+table(dados_alunos$escolaridade_mae)
+round(prop.table(table(dados_alunos$escolaridade_mae)) * 100, 2)
+```
+
+```{r}
+barplot(
+  table(dados_alunos$escolaridade_mae),
+  main = "Escolaridade da mãe",
+  xlab = "Escolaridade",
+  ylab = "Número de alunos"
+)
+```
+
+### Interpretação
+
+Em relação à escolaridade da mãe, 459 alunos (45,9%) possuem mães com Ensino Médio, 391 (39,1%) com Ensino Fundamental e 150 (15,0%) com Ensino Superior. Portanto, a categoria mais frequente é o Ensino Médio, enquanto o Ensino Superior apresenta a menor frequência.
+
+## Acesso à internet em casa
+
+A variável `acesso_internet` é qualitativa nominal dicotômica, com as categorias Sim e Não.
+
+```{r}
+table(dados_alunos$acesso_internet)
+round(prop.table(table(dados_alunos$acesso_internet)) * 100, 2)
+```
+
+```{r}
+barplot(
+  table(dados_alunos$acesso_internet),
+  main = "Acesso à internet em casa",
+  xlab = "Acesso à internet",
+  ylab = "Número de alunos"
+)
+```
+
+### Interpretação
+
+A maioria dos alunos possui acesso à internet em casa. Dos 1000 estudantes, 703 (70,3%) declararam possuir acesso, enquanto 297 (29,7%) não possuem. Assim, aproximadamente sete em cada dez alunos do banco têm acesso à internet em casa.
+
+# Análise bivariada
+
+Nesta etapa são investigadas relações entre pares de variáveis, buscando identificar possíveis associações entre características dos alunos e seu desempenho acadêmico.
+
+## Acesso à internet e desempenho
+
+Inicialmente, foram calculadas as notas médias dos alunos segundo a disponibilidade de acesso à internet em casa.
+
+```{r}
+aggregate(
+  nota_media ~ acesso_internet,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+Para comparar visualmente a distribuição das notas entre os dois grupos, foi construído um boxplot.
+
+```{r}
+boxplot(
+  nota_media ~ acesso_internet,
+  data = dados_alunos,
+  main = "Nota média segundo o acesso à internet",
+  xlab = "Acesso à internet em casa",
+  ylab = "Nota média"
+)
+```
+
+Para verificar se existe diferença estatisticamente significativa entre as médias dos dois grupos, foi aplicado o teste t de Welch.
+
+```{r}
+t.test(
+  nota_media ~ acesso_internet,
+  data = dados_alunos
+)
+```
+
+### Interpretação
+
+Os alunos sem acesso à internet apresentaram nota média de aproximadamente **6,48**, enquanto os alunos com acesso à internet apresentaram média de aproximadamente **6,43**.
+
+Embora exista uma pequena diferença entre as médias, o teste t de Welch apresentou **p = 0,6802**, valor superior ao nível de significância de 5% (0,05). Portanto, não há evidências estatísticas suficientes para concluir que exista diferença significativa entre as notas médias dos alunos com e sem acesso à internet.
+
+Além disso, o intervalo de confiança de 95% para a diferença entre as médias inclui o valor zero, reforçando a conclusão de que a diferença observada pode ser atribuída à variabilidade amostral.
+
+Assim, neste conjunto de dados, **não foi encontrada evidência de que alunos com acesso à internet em casa apresentem notas médias significativamente maiores**.
+
+## Escolaridade da mãe e desempenho
+
+A segunda questão investigativa busca verificar como a escolaridade da mãe se relaciona com o desempenho acadêmico dos alunos.
+
+Inicialmente, foram calculadas as notas médias dos estudantes para cada nível de escolaridade materna.
+
+```{r}
+aggregate(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+Para comparar visualmente a distribuição das notas entre os três níveis de escolaridade da mãe, foi construído um boxplot.
+
+```{r}
+boxplot(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos,
+  main = "Nota média segundo a escolaridade da mãe",
+  xlab = "Escolaridade da mãe",
+  ylab = "Nota média"
+)
+```
+
+Como existem três grupos de escolaridade — Fundamental, Médio e Superior — foi realizada uma análise de variância (ANOVA) para verificar se há diferença estatisticamente significativa entre as médias.
+
+```{r}
+modelo_escolaridade <- aov(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos
+)
+
+summary(modelo_escolaridade)
+```
+
+### Interpretação
+
+Os alunos cujas mães possuem Ensino Fundamental apresentaram nota média de aproximadamente **6,33**. Entre os alunos cujas mães possuem Ensino Médio, a nota média foi aproximadamente **6,55**, enquanto aqueles cujas mães possuem Ensino Superior apresentaram média de aproximadamente **6,41**.
+
+Descritivamente, o grupo correspondente ao Ensino Médio apresentou a maior média, seguido pelo Ensino Superior e pelo Ensino Fundamental. Entretanto, as diferenças observadas entre os três grupos são pequenas.
+
+A análise de variância apresentou valor de **F aproximadamente igual a 1,55** e **p aproximadamente igual a 0,213**. Como o valor de p é superior ao nível de significância de 5% (0,05), não há evidências estatísticas suficientes para concluir que as notas médias sejam diferentes entre os níveis de escolaridade materna.
+
+Portanto, neste conjunto de dados, **não foi encontrada evidência estatisticamente significativa de que a escolaridade da mãe esteja associada a diferenças no desempenho médio dos alunos**. Embora tenham sido observadas pequenas diferenças nas médias, elas podem ser explicadas pela variabilidade dos dados.
+
+## Frequência escolar e desempenho
+
+A terceira questão investigativa busca analisar a relação entre o número de faltas e a nota média dos alunos.
+
+Inicialmente, foi calculado o coeficiente de correlação de Pearson entre as duas variáveis.
+
+```{r}
+cor(
+  dados_alunos$faltas,
+  dados_alunos$nota_media
+)
+```
+
+Para verificar também a significância estatística da correlação, foi realizado o teste de correlação de Pearson.
+
+```{r}
+cor.test(
+  dados_alunos$faltas,
+  dados_alunos$nota_media,
+  method = "pearson"
+)
+```
+
+Para visualizar a relação entre as variáveis, foi construído um gráfico de dispersão.
+
+```{r}
+plot(
+  dados_alunos$faltas,
+  dados_alunos$nota_media,
+  main = "Relação entre número de faltas e nota média",
+  xlab = "Número de faltas",
+  ylab = "Nota média",
+  pch = 19
+)
+```
+
+Também foi ajustado um modelo de regressão linear simples, considerando a nota média como variável resposta e o número de faltas como variável explicativa.
+
+```{r}
+modelo_faltas <- lm(
+  nota_media ~ faltas,
+  data = dados_alunos
+)
+
+summary(modelo_faltas)
+```
+
+A reta de regressão foi acrescentada ao gráfico de dispersão.
+
+```{r}
+plot(
+  dados_alunos$faltas,
+  dados_alunos$nota_media,
+  main = "Faltas e desempenho acadêmico",
+  xlab = "Número de faltas",
+  ylab = "Nota média",
+  pch = 19
+)
+
+abline(
+  modelo_faltas,
+  lwd = 2
+)
+```
+
+### Investigação de um possível ponto crítico
+
+Para investigar se existe alguma faixa de faltas associada a uma redução mais acentuada no desempenho, os alunos foram agrupados segundo o número de ausências.
+
+```{r}
+dados_alunos$faixa_faltas <- cut(
+  dados_alunos$faltas,
+  breaks = c(-1, 5, 10, 15, 20, 25, 30),
+  labels = c(
+    "0 a 5",
+    "6 a 10",
+    "11 a 15",
+    "16 a 20",
+    "21 a 25",
+    "26 a 30"
+  )
+)
+
+table(dados_alunos$faixa_faltas)
+```
+
+Em seguida, foram calculadas as notas médias para cada faixa de faltas.
+
+```{r}
+aggregate(
+  nota_media ~ faixa_faltas,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+### Interpretação
+
+O coeficiente de correlação de Pearson entre o número de faltas e a nota média foi de aproximadamente **-0,01**, indicando uma correlação linear praticamente nula entre as duas variáveis.
+
+O teste de correlação apresentou **p aproximadamente igual a 0,75**, valor bastante superior ao nível de significância de 5% (0,05). Portanto, não há evidências estatísticas de uma relação linear significativa entre o número de faltas e a nota média neste conjunto de dados.
+
+O modelo de regressão linear também apresentou uma inclinação muito próxima de zero. O coeficiente associado ao número de faltas foi de aproximadamente **-0,0068**, indicando que o aumento de uma falta estaria associado, em média, a uma redução de apenas cerca de 0,007 ponto na nota. Além disso, o modelo apresentou um coeficiente de determinação muito próximo de zero, mostrando que o número de faltas praticamente não explica a variabilidade das notas neste banco de dados.
+
+A análise por faixas mostrou aproximadamente as seguintes médias:
+
+- de 0 a 5 faltas: **6,37**;
+- de 6 a 10 faltas: **6,47**;
+- de 11 a 15 faltas: **6,46**;
+- de 16 a 20 faltas: **5,60**.
+
+Embora a última faixa apresente uma nota média menor, ela contém apenas **9 alunos**, enquanto as demais faixas possuem um número muito maior de observações. Dessa forma, essa redução deve ser interpretada com cautela.
+
+Portanto, **não foi possível identificar, com os dados disponíveis, um ponto crítico bem definido a partir do qual o aumento das faltas comprometa severamente o desempenho acadêmico**. A redução observada entre os alunos com 16 a 20 faltas é interessante do ponto de vista descritivo, mas o pequeno número de estudantes nessa faixa não permite tratá-la como evidência conclusiva de um limiar de faltas.
+
+## Perfil dos alunos do turno noturno
+
+A quarta questão investigativa busca verificar se os alunos do turno noturno apresentam maior número de faltas e como seu desempenho acadêmico se compara ao dos estudantes dos turnos Matutino e Vespertino.
+
+Inicialmente, foram calculadas as médias de faltas em cada turno.
+
+```{r}
+aggregate(
+  faltas ~ turno,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+Para comparar visualmente a distribuição das faltas entre os turnos, foi construído um boxplot.
+
+```{r}
+boxplot(
+  faltas ~ turno,
+  data = dados_alunos,
+  main = "Número de faltas segundo o turno",
+  xlab = "Turno",
+  ylab = "Número de faltas"
+)
+```
+
+Para verificar se existem diferenças estatisticamente significativas entre as médias de faltas dos três turnos, foi realizada uma análise de variância (ANOVA).
+
+```{r}
+modelo_faltas_turno <- aov(
+  faltas ~ turno,
+  data = dados_alunos
+)
+
+summary(modelo_faltas_turno)
+```
+
+Em seguida, foram calculadas as notas médias dos alunos de cada turno.
+
+```{r}
+aggregate(
+  nota_media ~ turno,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+Para visualizar as diferenças no desempenho acadêmico entre os turnos, foi construído um boxplot.
+
+```{r}
+boxplot(
+  nota_media ~ turno,
+  data = dados_alunos,
+  main = "Nota média segundo o turno",
+  xlab = "Turno",
+  ylab = "Nota média"
+)
+```
+
+Também foi realizada uma análise de variância para verificar se as diferenças observadas entre as notas médias dos três turnos são estatisticamente significativas.
+
+```{r}
+modelo_nota_turno <- aov(
+  nota_media ~ turno,
+  data = dados_alunos
+)
+
+summary(modelo_nota_turno)
+```
+
+### Interpretação
+
+O número médio de faltas foi de aproximadamente **8,03** no turno Matutino, **7,95** no Noturno e **8,03** no Vespertino.
+
+Portanto, descritivamente, os alunos do turno Noturno não apresentaram maior número de faltas. Na realidade, sua média de faltas foi ligeiramente menor que a observada nos outros dois turnos.
+
+A análise de variância para o número de faltas apresentou **F aproximadamente igual a 0,074** e **p aproximadamente igual a 0,929**. Como o valor de p é muito superior a 0,05, não há evidências estatísticas de diferença entre o número médio de faltas dos três turnos.
+
+Em relação ao desempenho acadêmico, as notas médias foram aproximadamente:
+
+- Matutino: **6,46**;
+- Noturno: **6,58**;
+- Vespertino: **6,34**.
+
+O turno Noturno apresentou, descritivamente, a maior nota média entre os três grupos. Entretanto, a análise de variância apresentou **F aproximadamente igual a 1,14** e **p aproximadamente igual a 0,319**.
+
+Como o valor de p também é superior ao nível de significância de 5%, não há evidências estatísticas suficientes para afirmar que o desempenho médio seja diferente entre os turnos.
+
+Assim, neste conjunto de dados, **os alunos do turno Noturno não apresentam mais faltas que os demais e também não foi identificada diferença estatisticamente significativa no desempenho acadêmico entre os três turnos**.
+
+## Desigualdades educacionais
+
+A quinta questão investigativa busca verificar se características sociofamiliares, especificamente a escolaridade da mãe e o acesso à internet em casa, ajudam a explicar parte da variabilidade observada nas notas dos alunos.
+
+Para isso, foi ajustado um modelo de regressão linear múltipla, considerando a nota média como variável resposta e a escolaridade da mãe e o acesso à internet como variáveis explicativas.
+
+```{r}
+modelo_sociofamiliar <- lm(
+  nota_media ~ escolaridade_mae + acesso_internet,
+  data = dados_alunos
+)
+
+summary(modelo_sociofamiliar)
+```
+
+### Interpretação
+
+O modelo de regressão múltipla permite analisar conjuntamente a associação entre escolaridade materna, acesso à internet e desempenho acadêmico.
+
+Os coeficientes estimados para as variáveis sociofamiliares foram pequenos e os respectivos valores de p ficaram acima do nível de significância de 5%, indicando ausência de evidências estatísticas suficientes para afirmar que essas variáveis estejam associadas de forma significativa à nota média neste conjunto de dados.
+
+Além disso, o coeficiente de determinação do modelo, representado pelo **R²**, foi muito próximo de zero. Isso significa que a escolaridade da mãe e o acesso à internet explicam apenas uma parcela muito pequena da variabilidade observada nas notas dos estudantes.
+
+Portanto, neste banco de dados, **as variáveis sociofamiliares analisadas não explicam de forma relevante a variação do desempenho acadêmico dos alunos**. Isso não significa que essas características não sejam importantes em contextos educacionais reais, mas apenas que, neste conjunto de dados específico, não foi identificada uma associação estatisticamente significativa.
+
+## Análise conjunta de turno e acesso à internet
+
+A sexta questão investigativa busca identificar possíveis padrões no desempenho acadêmico quando são consideradas conjuntamente as variáveis turno de estudo e acesso à internet em casa.
+
+Inicialmente, foram calculadas as notas médias para cada combinação entre turno e acesso à internet.
+
+```{r}
+aggregate(
+  nota_media ~ turno + acesso_internet,
+  data = dados_alunos,
+  FUN = mean
+)
+```
+
+Também foi verificado o número de alunos em cada combinação de categorias.
+
+```{r}
+table(
+  dados_alunos$turno,
+  dados_alunos$acesso_internet
+)
+```
+
+Para facilitar a visualização dos possíveis padrões, foi construído um gráfico de interação.
+
+```{r}
+interaction.plot(
+  x.factor = dados_alunos$turno,
+  trace.factor = dados_alunos$acesso_internet,
+  response = dados_alunos$nota_media,
+  xlab = "Turno",
+  ylab = "Nota média",
+  trace.label = "Acesso à internet"
+)
+```
+
+Por fim, foi utilizada uma análise de variância de dois fatores, incluindo a interação entre turno e acesso à internet.
+
+```{r}
+modelo_interacao <- aov(
+  nota_media ~ turno * acesso_internet,
+  data = dados_alunos
+)
+
+summary(modelo_interacao)
+```
+
+### Interpretação
+
+As notas médias encontradas para cada combinação foram aproximadamente:
+
+- Matutino sem internet: **6,54**;
+- Matutino com internet: **6,43**;
+- Noturno sem internet: **6,86**;
+- Noturno com internet: **6,48**;
+- Vespertino sem internet: **6,21**;
+- Vespertino com internet: **6,40**.
+
+Descritivamente, o grupo com maior nota média foi formado pelos alunos do turno Noturno sem acesso à internet, com média aproximada de **6,86**. A menor média foi observada entre os alunos do turno Vespertino sem acesso à internet, com aproximadamente **6,21**.
+
+Entretanto, a análise de variância de dois fatores não apresentou evidência estatisticamente significativa para o efeito do turno, para o acesso à internet ou para a interação entre essas duas variáveis.
+
+Em particular, o efeito de interação entre turno e acesso à internet apresentou valor de **p aproximadamente igual a 0,27**, superior ao nível de significância de 5%.
+
+Assim, embora existam pequenas diferenças descritivas entre as seis combinações analisadas, **não foi identificado um padrão estatisticamente significativo indicando que o efeito do acesso à internet sobre o desempenho dependa do turno de estudo**.
+
+# Análise multivariada
+
+Nesta etapa, as principais variáveis do banco de dados são consideradas simultaneamente, buscando verificar quais delas apresentam associação com o desempenho acadêmico quando as demais são mantidas no modelo.
+
+Foi ajustado um modelo de regressão linear múltipla, considerando a nota média como variável resposta e o número de faltas, o turno, a escolaridade da mãe e o acesso à internet como variáveis explicativas.
+
+```{r}
+modelo_completo <- lm(
+  nota_media ~ faltas + turno + escolaridade_mae + acesso_internet,
+  data = dados_alunos
+)
+
+summary(modelo_completo)
+```
+
+## Interpretação
+
+A análise multivariada permitiu avaliar simultaneamente a associação entre número de faltas, turno de estudo, escolaridade da mãe, acesso à internet e desempenho acadêmico.
+
+Nenhuma das variáveis incluídas no modelo apresentou associação estatisticamente significativa com a nota média ao nível de significância de 5%. Os valores de p foram superiores a 0,05 para número de faltas, turno de estudo, escolaridade materna e acesso à internet.
+
+O coeficiente de determinação foi **R² = 0,0058**, indicando que o conjunto de variáveis analisadas explica aproximadamente **0,58% da variabilidade observada nas notas médias**. Portanto, a capacidade explicativa do modelo é muito pequena.
+
+O R² ajustado apresentou valor ligeiramente negativo, aproximadamente **-0,0002**. Isso indica que, após considerar o número de variáveis incluídas no modelo, seu poder explicativo não é superior de maneira relevante ao de um modelo que utilizasse apenas a média geral das notas.
+
+Além disso, o teste global do modelo apresentou **F = 0,9621** e **p = 0,4497**. Como esse valor de p é superior a 0,05, o modelo como um todo não apresentou significância estatística.
+
+Dessa forma, neste conjunto de dados, **não foram encontradas evidências de que faltas, turno de estudo, escolaridade da mãe e acesso à internet, consideradas conjuntamente, expliquem de maneira estatisticamente significativa o desempenho acadêmico dos alunos**.
+
+# Síntese dos resultados
+
+A análise do banco de dados permitiu descrever o perfil dos 1000 alunos e investigar possíveis relações entre desempenho acadêmico, frequência escolar, turno de estudo e características sociofamiliares.
+
+Na análise univariada, o número médio de faltas foi de aproximadamente **8,01**, enquanto a nota média dos alunos foi de aproximadamente **6,44**. A maior parte dos estudantes estava matriculada no turno Matutino, correspondendo a **45,1%** da amostra. Em relação à escolaridade materna, a categoria mais frequente foi Ensino Médio, com **45,9%**. Além disso, **70,3%** dos estudantes possuíam acesso à internet em casa.
+
+Nas análises bivariadas, foram obtidos os seguintes resultados principais:
+
+- não foi encontrada diferença estatisticamente significativa entre as notas dos alunos com e sem acesso à internet em casa;
+- não foi encontrada diferença estatisticamente significativa entre as notas médias dos alunos segundo a escolaridade da mãe;
+- a correlação entre número de faltas e nota média foi praticamente nula e não significativa;
+- não foi possível identificar um ponto crítico bem definido a partir do qual o número de faltas comprometesse severamente o desempenho;
+- os alunos do turno Noturno não apresentaram maior média de faltas que os estudantes dos demais turnos;
+- não foram encontradas diferenças estatisticamente significativas nas notas médias entre os turnos;
+- não foi identificada interação estatisticamente significativa entre turno de estudo e acesso à internet.
+
+Na análise das características sociofamiliares, escolaridade da mãe e acesso à internet explicaram apenas uma parcela muito pequena da variabilidade das notas.
+
+Finalmente, no modelo multivariado, o conjunto formado por número de faltas, turno, escolaridade da mãe e acesso à internet explicou aproximadamente **0,58% da variabilidade das notas médias**. O modelo global não apresentou significância estatística.
+
+Assim, para este conjunto de dados, as variáveis consideradas não se mostraram suficientes para explicar de maneira relevante as diferenças observadas no desempenho acadêmico.
+
+# Recomendações
+
+Com base nos resultados obtidos, recomenda-se cautela ao utilizar isoladamente variáveis como número de faltas, turno, escolaridade materna ou acesso à internet para explicar o desempenho acadêmico dos estudantes.
+
+Como essas características apresentaram baixa capacidade explicativa neste banco de dados, análises futuras poderiam incorporar outras variáveis potencialmente relacionadas ao rendimento escolar, tais como:
+
+- hábitos e tempo dedicado aos estudos;
+- participação e envolvimento nas atividades escolares;
+- condições de trabalho dos estudantes;
+- renda familiar;
+- estrutura e recursos disponíveis na escola;
+- histórico de desempenho acadêmico;
+- fatores motivacionais e socioemocionais;
+- acompanhamento familiar.
+
+A utilização de um conjunto mais amplo de informações poderá permitir uma compreensão mais completa dos fatores associados ao desempenho dos alunos.
+
+# Limitações metodológicas
+
+Os resultados deste relatório devem ser interpretados considerando algumas limitações.
+
+Em primeiro lugar, o banco de dados utilizado foi construído para **simular uma situação de pesquisa em uma escola pública brasileira**, com finalidade pedagógica. Portanto, os resultados obtidos não devem ser generalizados diretamente para todos os estudantes ou escolas públicas brasileiras.
+
+Além disso, foram consideradas somente cinco variáveis, o que limita a capacidade de representar toda a complexidade do processo educacional.
+
+Outra limitação importante é que as análises realizadas identificam principalmente **associações estatísticas**. Mesmo quando uma relação estatisticamente significativa é encontrada, isso não permite concluir automaticamente que uma variável seja causa da outra.
+
+Também devem ser consideradas as diferenças no número de observações entre alguns grupos. Na análise das faixas de faltas, por exemplo, o grupo de alunos com 16 a 20 faltas apresentou apenas nove estudantes, exigindo cautela na interpretação da redução observada na nota média desse grupo.
+
+Por fim, a ausência de significância estatística não significa necessariamente que uma determinada característica seja irrelevante em contextos educacionais reais. Significa apenas que, neste banco de dados e com as análises utilizadas, não foram encontradas evidências estatísticas suficientes para demonstrar determinada associação.
+
+# Sugestões para pesquisas futuras
+
+Pesquisas futuras poderiam utilizar dados observados em escolas reais e incluir um número maior de variáveis relacionadas às características individuais, familiares e escolares dos estudantes.
+
+Também seria interessante acompanhar os mesmos alunos ao longo do tempo, permitindo investigar como alterações na frequência, nas condições socioeconômicas e no acesso a recursos educacionais se relacionam com a evolução do desempenho.
+
+Outra possibilidade seria ampliar o tamanho dos grupos menos representados e utilizar métodos estatísticos adicionais para investigar relações não lineares e possíveis interações entre diferentes fatores.
+
+# Considerações finais
+
+A realização deste relatório permitiu aplicar, de maneira prática, diferentes ferramentas de análise estatística a um conjunto de dados contextualizado no ambiente escolar.
+
+Foram realizadas análises univariadas, bivariadas e multivariadas, utilizando medidas descritivas, representações gráficas, testes de hipóteses, correlação, análise de variância e modelos de regressão.
+
+Os resultados mostraram que, neste conjunto de dados, nenhuma das variáveis investigadas apresentou forte capacidade de explicar o desempenho acadêmico dos alunos. Esse resultado evidencia a importância de evitar conclusões baseadas apenas em diferenças observadas descritivamente e de utilizar procedimentos estatísticos para avaliar se tais diferenças possuem evidência suficiente.
+
+Dessa forma, o trabalho possibilitou não apenas descrever os dados, mas também exercitar a interpretação crítica dos resultados e compreender algumas das possibilidades e limitações da análise estatística aplicada a problemas educacionais.
