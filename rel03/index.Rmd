@@ -1,25 +1,26 @@
 ---
-title: "Relatório 03 - Distribuição de probabilidade"
-author: "Ben Dêivide"
-date: "12/04/2022"
-header-includes:
-  - \usepackage{titling}
-  - \pretitle{\begin{center}
-    \includegraphics[width=2in,height=2in]{ufsj.png}\LARGE\\}
-  - \posttitle{\end{center}}
-toc-title: "Sumário"
+title: "Relatório 03 - Medidas de Posição e Dispersão"
+author: "Ailton Machado"
+date: "14/09/2026"
 output:
-  bookdown::html_document2: 
+  html_document:
+    toc: true
+    df_print: paged
+  bookdown::html_document2:
     theme: journal
     highlight: tango
-    toc: yes
-    number_sections: yes
+    toc: true
+    number_sections: true
     includes:
       in_header: logo.html
   pdf_document:
-    
-    toc: yes
-    number_sections: yes
+    toc: true
+    number_sections: true
+toc-title: Sumário
+header-includes:
+- \usepackage{titling}
+- \pretitle{\begin{center} \includegraphics[width=2in,height=2in]{ufsj.png}\LARGE\\}
+- \posttitle{\end{center}}
 ---
 
 ```{r setup, include=FALSE}
@@ -27,11 +28,706 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 --- 
 
-# Objetivo
+# Introdução
 
-Descrever o objetivo do relatório!
+Este relatório tem como objetivo aprofundar a análise estatística do banco de dados utilizado no Relatório 02, com ênfase nas medidas de posição e de dispersão aplicadas às variáveis quantitativas `faltas` e `nota_media`.
 
-# Apresentação do relatório
+Busca-se não apenas calcular as medidas estatísticas, mas também interpretá-las no contexto educacional, analisando o comportamento típico dos dados, sua variabilidade e possíveis diferenças entre grupos de estudantes.
 
-Aqui será o local para apresentar o material sobre o relatório.
+# Descrição do banco de dados
 
+O banco de dados contém informações de 1000 alunos de uma escola pública e possui cinco variáveis: número de faltas, nota média, turno de estudo, escolaridade da mãe e acesso à internet em casa.
+
+Neste relatório, as principais variáveis analisadas serão:
+
+- `faltas`: variável quantitativa discreta;
+- `nota_media`: variável quantitativa contínua.
+
+As demais variáveis serão utilizadas posteriormente para a formação de subgrupos de comparação.
+
+# Metodologia
+
+O banco de dados foi importado para o R utilizando o seguinte comando:
+
+```{r}
+dados_alunos <- read.table(
+  file = "dados_alunos.csv",
+  header = TRUE,
+  sep = ";",
+  dec = ",",
+  stringsAsFactors = FALSE
+)
+```
+
+Inicialmente, foram verificadas a dimensão e a estrutura do banco.
+
+```{r}
+head(dados_alunos)
+dim(dados_alunos)
+str(dados_alunos)
+```
+
+# Medidas de posição
+
+Nesta seção são analisadas as principais medidas de posição das variáveis quantitativas `faltas` e `nota_media`.
+
+## Média aritmética
+
+```{r}
+mean(dados_alunos$faltas)
+mean(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+O número médio de faltas foi de aproximadamente **8,01 faltas por aluno**.
+
+A nota média dos estudantes foi de aproximadamente **6,44 pontos**.
+
+Esses valores representam o centro aritmético das duas distribuições, servindo como uma primeira medida de comportamento típico dos alunos.
+
+## Mediana
+
+```{r}
+median(dados_alunos$faltas)
+median(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+A mediana do número de faltas foi igual a **8**, indicando que metade dos alunos possui até 8 faltas e metade possui 8 faltas ou mais.
+
+Para a variável nota média, a mediana foi igual a **6,5**. Portanto, aproximadamente metade dos estudantes possui nota média inferior ou igual a 6,5 e metade possui valor igual ou superior.
+
+Em ambas as variáveis, média e mediana apresentam valores bastante próximos, sugerindo que o centro das distribuições não sofre forte deslocamento por valores extremos.
+
+## Moda
+
+Para calcular a moda, foi criada uma função que identifica o valor de maior frequência.
+
+```{r}
+moda <- function(x) {
+  tab <- table(x)
+  as.numeric(names(tab)[tab == max(tab)])
+}
+
+moda(dados_alunos$faltas)
+moda(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+A moda do número de faltas foi **7**, ou seja, sete faltas foi o valor observado com maior frequência entre os alunos.
+
+Para a variável nota média, a moda foi **10**, sendo essa a nota individual que apareceu com maior frequência no banco de dados.
+
+## Quartis
+
+```{r}
+quantile(
+  dados_alunos$faltas,
+  probs = c(0.25, 0.50, 0.75)
+)
+
+quantile(
+  dados_alunos$nota_media,
+  probs = c(0.25, 0.50, 0.75)
+)
+```
+
+### Interpretação dos quartis
+
+Para o número de faltas, foram obtidos:
+
+- primeiro quartil (Q1): **6**;
+- segundo quartil (Q2): **8**;
+- terceiro quartil (Q3): **10**.
+
+Isso significa que aproximadamente 25% dos alunos possuem até 6 faltas, 50% possuem até 8 faltas e 75% possuem até 10 faltas.
+
+Para as notas médias:
+
+- primeiro quartil (Q1): **5,2**;
+- segundo quartil (Q2): **6,5**;
+- terceiro quartil (Q3): **7,7**.
+
+Assim, aproximadamente 25% dos alunos possuem nota média de até 5,2; metade apresenta nota de até 6,5; e 75% apresentam nota de até 7,7.
+
+## Percentis
+
+Foram calculados os percentis 10, 25, 50, 75 e 90.
+
+```{r}
+quantile(
+  dados_alunos$faltas,
+  probs = c(0.10, 0.25, 0.50, 0.75, 0.90)
+)
+
+quantile(
+  dados_alunos$nota_media,
+  probs = c(0.10, 0.25, 0.50, 0.75, 0.90)
+)
+```
+
+### Interpretação dos percentis
+
+Para o número de faltas, os percentis obtidos foram aproximadamente:
+
+- P10 = **5**;
+- P25 = **6**;
+- P50 = **8**;
+- P75 = **10**;
+- P90 = **12**.
+
+Por exemplo, P90 = 12 significa que aproximadamente 90% dos alunos apresentam até 12 faltas.
+
+Para a nota média:
+
+- P10 ≈ **3,99**;
+- P25 = **5,2**;
+- P50 = **6,5**;
+- P75 = **7,7**;
+- P90 = **9,1**.
+
+Assim, por exemplo, um aluno com nota 9,1 encontra-se aproximadamente no percentil 90, ou seja, sua nota é igual ou superior à de grande parte dos estudantes.
+
+# Medidas de dispersão
+
+Nesta seção são analisadas medidas que descrevem o grau de variabilidade das variáveis `faltas` e `nota_media`.
+
+## Amplitude total
+
+```{r}
+amplitude_faltas <- max(dados_alunos$faltas) - min(dados_alunos$faltas)
+amplitude_nota <- max(dados_alunos$nota_media) - min(dados_alunos$nota_media)
+
+amplitude_faltas
+amplitude_nota
+```
+
+### Interpretação
+
+A amplitude total do número de faltas foi **18**, pois os valores variaram de 1 a 19 faltas.
+
+Para a nota média, a amplitude foi **9,5**, com valores entre 0,5 e 10.
+
+A amplitude mostra a distância entre o menor e o maior valor observado, mas considera apenas os extremos da distribuição.
+
+## Amplitude interquartil
+
+```{r}
+IQR(dados_alunos$faltas)
+IQR(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+A amplitude interquartil das faltas foi igual a **4**, indicando que os 50% centrais dos alunos apresentam uma variação de quatro faltas entre o primeiro e o terceiro quartil.
+
+Para a nota média, a amplitude interquartil foi **2,5 pontos**.
+
+A amplitude interquartil é menos influenciada por valores extremos do que a amplitude total e descreve a dispersão da região central dos dados.
+
+## Variância
+
+```{r}
+var(dados_alunos$faltas)
+var(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+A variância amostral do número de faltas foi aproximadamente **7,83 faltas²**, enquanto a variância das notas foi aproximadamente **3,54 pontos²**.
+
+A variância mede o grau de dispersão dos valores em relação à média. Entretanto, como sua unidade fica elevada ao quadrado, sua interpretação direta pode ser menos intuitiva.
+
+## Desvio-padrão
+
+```{r}
+sd(dados_alunos$faltas)
+sd(dados_alunos$nota_media)
+```
+
+### Interpretação
+
+O desvio-padrão do número de faltas foi aproximadamente **2,80 faltas**, enquanto o desvio-padrão das notas foi aproximadamente **1,88 ponto**.
+
+O desvio-padrão expressa a dispersão na mesma unidade da variável original, tornando sua interpretação mais direta que a variância.
+
+## Coeficiente de variação
+
+```{r}
+cv_faltas <- sd(dados_alunos$faltas) / mean(dados_alunos$faltas) * 100
+cv_nota <- sd(dados_alunos$nota_media) / mean(dados_alunos$nota_media) * 100
+
+cv_faltas
+cv_nota
+```
+
+### Interpretação
+
+O coeficiente de variação do número de faltas foi aproximadamente **34,93%**, enquanto o coeficiente de variação das notas foi aproximadamente **29,21%**.
+
+Assim, proporcionalmente às respectivas médias, o número de faltas apresenta maior variabilidade do que as notas.
+
+O coeficiente de variação é especialmente útil para comparar a dispersão relativa de variáveis que possuem unidades ou escalas diferentes, pois expressa o desvio-padrão como porcentagem da média.
+
+# Análise por subgrupos
+
+Nesta seção, as medidas de posição e dispersão são utilizadas para comparar diferentes grupos de alunos.
+
+## Notas segundo o acesso à internet
+
+Os alunos foram divididos entre aqueles que possuem e aqueles que não possuem acesso à internet em casa.
+
+Inicialmente, foi criada uma função para calcular as principais medidas estatísticas de cada grupo.
+
+```{r}
+resumo_estatistico <- function(x) {
+  c(
+    Media = mean(x),
+    Mediana = median(x),
+    Desvio_Padrao = sd(x),
+    Minimo = min(x),
+    Q1 = quantile(x, 0.25),
+    Q3 = quantile(x, 0.75),
+    Maximo = max(x),
+    AIQ = IQR(x),
+    CV = sd(x) / mean(x) * 100
+  )
+}
+```
+
+Em seguida, a função foi aplicada às notas segundo o acesso à internet.
+
+```{r}
+by(
+  dados_alunos$nota_media,
+  dados_alunos$acesso_internet,
+  resumo_estatistico
+)
+```
+
+### Interpretação
+
+Os alunos sem acesso à internet apresentaram nota média de aproximadamente **6,48**, enquanto os alunos com acesso à internet apresentaram média de aproximadamente **6,43**. As medianas foram iguais a **6,5** nos dois grupos.
+
+As medidas de dispersão também foram muito semelhantes. O desvio-padrão foi aproximadamente **1,90** entre os alunos sem internet e **1,87** entre os alunos com internet. Os coeficientes de variação foram, respectivamente, **29,37%** e **29,16%**.
+
+O primeiro quartil foi igual a **5,2** nos dois grupos, enquanto o terceiro quartil foi **7,8** para os alunos sem internet e **7,7** para os alunos com internet. A amplitude interquartil também apresentou valores muito próximos: **2,6** e **2,5**.
+
+Portanto, considerando conjuntamente as medidas de posição e de dispersão, **os dois grupos apresentam comportamento bastante semelhante em relação às notas**. As pequenas diferenças observadas não indicam, do ponto de vista descritivo, uma mudança relevante no centro ou na variabilidade das distribuições.
+
+## Notas segundo a escolaridade da mãe
+
+Nesta etapa, as notas são comparadas segundo os três níveis de escolaridade materna: Fundamental, Médio e Superior.
+
+```{r}
+by(
+  dados_alunos$nota_media,
+  dados_alunos$escolaridade_mae,
+  resumo_estatistico
+)
+```
+
+### Interpretação
+
+Os alunos cujas mães possuem Ensino Fundamental apresentaram nota média de aproximadamente **6,33** e mediana igual a **6,5**. O desvio-padrão foi de aproximadamente **1,85**, a amplitude interquartil foi **2,6** e o coeficiente de variação foi aproximadamente **29,28%**.
+
+No grupo em que a mãe possui Ensino Médio, a média foi aproximadamente **6,55** e a mediana também foi **6,5**. O desvio-padrão foi aproximadamente **1,85**, a amplitude interquartil foi **2,4** e o coeficiente de variação foi aproximadamente **28,18%**.
+
+Para os alunos cujas mães possuem Ensino Superior, a nota média foi aproximadamente **6,41** e a mediana **6,2**. Esse grupo apresentou desvio-padrão de aproximadamente **2,05**, amplitude interquartil igual a **3,0** e coeficiente de variação de aproximadamente **32,01%**.
+
+Descritivamente, o grupo correspondente ao Ensino Médio apresentou a maior média, embora as diferenças entre os centros das três distribuições sejam pequenas. As medianas dos grupos Fundamental e Médio foram iguais a 6,5, enquanto a mediana do grupo Superior foi ligeiramente menor, igual a 6,2.
+
+Em relação à dispersão, o grupo de Ensino Superior apresentou a maior variabilidade, tanto pelo desvio-padrão quanto pela amplitude interquartil e pelo coeficiente de variação. Já o grupo de Ensino Médio apresentou a menor variabilidade relativa.
+
+Portanto, **não se observa um aumento progressivo da nota média à medida que aumenta a escolaridade da mãe**. Além disso, a análise das medidas de dispersão mostra que comparar apenas as médias seria insuficiente para caracterizar adequadamente os três grupos.
+
+## Faltas segundo o turno
+
+Nesta etapa, o número de faltas é comparado entre os alunos dos turnos Matutino, Vespertino e Noturno.
+
+```{r}
+by(
+  dados_alunos$faltas,
+  dados_alunos$turno,
+  resumo_estatistico
+)
+```
+
+## Faltas segundo o turno
+
+Nesta etapa, o número de faltas é comparado entre os alunos dos turnos Matutino, Vespertino e Noturno.
+
+```{r}
+by(
+  dados_alunos$faltas,
+  dados_alunos$turno,
+  resumo_estatistico
+)
+```
+
+### Interpretação
+
+No turno Matutino, o número médio de faltas foi aproximadamente **8,03**, com mediana igual a **8**, desvio-padrão de aproximadamente **2,78** e amplitude interquartil igual a **4**.
+
+No turno Noturno, a média foi aproximadamente **7,95**, a mediana **8**, o desvio-padrão aproximadamente **2,65** e a amplitude interquartil igual a **3**.
+
+No turno Vespertino, a média foi aproximadamente **8,03**, a mediana **8**, o desvio-padrão aproximadamente **2,91** e a amplitude interquartil igual a **4**.
+
+As médias dos três turnos são bastante próximas e as medianas são iguais. Portanto, utilizando uma medida de posição central, **não se observa diferença relevante no número típico de faltas entre os turnos**.
+
+Quanto à variabilidade, o turno Vespertino apresentou o maior desvio-padrão, aproximadamente **2,91**, enquanto o Noturno apresentou o menor, aproximadamente **2,65**. A amplitude interquartil também foi menor no turno Noturno.
+
+Assim, média e mediana conduzem essencialmente à mesma conclusão quanto ao comportamento típico das faltas: os três turnos apresentam valores centrais muito semelhantes. A principal diferença aparece na dispersão, ligeiramente maior no turno Vespertino.
+
+# Representações gráficas
+
+As representações gráficas auxiliam na interpretação das medidas de posição e de dispersão calculadas anteriormente.
+
+## Boxplot da nota média
+
+```{r}
+boxplot(
+  dados_alunos$nota_media,
+  main = "Distribuição das notas médias",
+  ylab = "Nota média"
+)
+
+sort(unique(boxplot.stats(dados_alunos$nota_media)$out))
+```
+
+### Interpretação
+
+O boxplot da nota média apresenta mediana igual a **6,5**, primeiro quartil igual a **5,2** e terceiro quartil igual a **7,7**. Portanto, a amplitude interquartil é igual a **2,5 pontos**.
+
+Isso significa que aproximadamente 50% das notas encontram-se entre 5,2 e 7,7.
+
+Foram identificados alguns valores baixos como possíveis valores discrepantes, entre eles **0,5; 1,0; 1,1; 1,2 e 1,3**. Esses valores ajudam a compreender por que medidas resistentes a extremos, como a mediana e a amplitude interquartil, podem ser úteis na descrição da distribuição.
+
+## Boxplot do número de faltas
+
+```{r}
+boxplot(
+  dados_alunos$faltas,
+  main = "Distribuição do número de faltas",
+  ylab = "Número de faltas"
+)
+
+sort(unique(boxplot.stats(dados_alunos$faltas)$out))
+```
+
+### Interpretação
+
+Para o número de faltas, a mediana foi **8**, o primeiro quartil **6** e o terceiro quartil **10**, resultando em amplitude interquartil igual a **4**.
+
+Assim, aproximadamente metade dos estudantes possui entre 6 e 10 faltas.
+
+O boxplot identificou valores elevados de **17 e 19 faltas** como possíveis valores discrepantes. Apesar desses valores extremos, média e mediana permaneceram muito próximas, indicando que seu impacto sobre o centro da distribuição é limitado.
+
+## Comparação das notas segundo o acesso à internet
+
+```{r}
+boxplot(
+  nota_media ~ acesso_internet,
+  data = dados_alunos,
+  main = "Notas segundo o acesso à internet",
+  xlab = "Acesso à internet em casa",
+  ylab = "Nota média"
+)
+```
+
+### Interpretação
+
+Os boxplots dos alunos com e sem acesso à internet apresentam centros e dispersões muito semelhantes. As medianas são iguais a **6,5**, e as amplitudes interquartis também são próximas.
+
+Visualmente, portanto, não há uma diferença expressiva no comportamento das notas entre os dois grupos.
+
+## Comparação das notas segundo a escolaridade da mãe
+
+```{r}
+boxplot(
+  nota_media ~ escolaridade_mae,
+  data = dados_alunos,
+  main = "Notas segundo a escolaridade da mãe",
+  xlab = "Escolaridade da mãe",
+  ylab = "Nota média"
+)
+```
+
+### Interpretação
+
+As distribuições apresentam centros relativamente próximos. Os grupos Fundamental e Médio possuem mediana igual a **6,5**, enquanto o grupo Superior apresenta mediana igual a **6,2**.
+
+O grupo Superior apresenta maior dispersão, com amplitude interquartil igual a **3,0** e coeficiente de variação de aproximadamente **32,01%**.
+
+Dessa forma, os gráficos reforçam que uma comparação baseada apenas nas médias não é suficiente para caracterizar completamente os grupos.
+
+## Comparação das notas segundo o turno
+
+```{r}
+boxplot(
+  nota_media ~ turno,
+  data = dados_alunos,
+  main = "Notas segundo o turno de estudo",
+  xlab = "Turno",
+  ylab = "Nota média"
+)
+```
+
+### Interpretação
+
+As distribuições das notas dos três turnos apresentam grande sobreposição.
+
+As notas médias são aproximadamente **6,46** no Matutino, **6,58** no Noturno e **6,34** no Vespertino. As medianas também são próximas.
+
+Portanto, do ponto de vista descritivo, não se observa uma separação acentuada entre os grupos segundo o turno de estudo.
+
+# Tabela estatística
+
+A seguir é apresentada uma tabela-síntese com as principais medidas de posição e dispersão das variáveis `faltas` e `nota_media`.
+
+```{r}
+tabela_sintese <- data.frame(
+  Medida = c(
+    "Mínimo",
+    "Q1",
+    "Média",
+    "Mediana",
+    "Q3",
+    "Máximo",
+    "Amplitude",
+    "AIQ",
+    "Variância",
+    "Desvio-padrão",
+    "Coeficiente de variação (%)"
+  ),
+  Faltas = c(
+    min(dados_alunos$faltas),
+    as.numeric(quantile(dados_alunos$faltas, 0.25)),
+    mean(dados_alunos$faltas),
+    median(dados_alunos$faltas),
+    as.numeric(quantile(dados_alunos$faltas, 0.75)),
+    max(dados_alunos$faltas),
+    max(dados_alunos$faltas) - min(dados_alunos$faltas),
+    IQR(dados_alunos$faltas),
+    var(dados_alunos$faltas),
+    sd(dados_alunos$faltas),
+    sd(dados_alunos$faltas) / mean(dados_alunos$faltas) * 100
+  ),
+  Nota_Media = c(
+    min(dados_alunos$nota_media),
+    as.numeric(quantile(dados_alunos$nota_media, 0.25)),
+    mean(dados_alunos$nota_media),
+    median(dados_alunos$nota_media),
+    as.numeric(quantile(dados_alunos$nota_media, 0.75)),
+    max(dados_alunos$nota_media),
+    max(dados_alunos$nota_media) - min(dados_alunos$nota_media),
+    IQR(dados_alunos$nota_media),
+    var(dados_alunos$nota_media),
+    sd(dados_alunos$nota_media),
+    sd(dados_alunos$nota_media) / mean(dados_alunos$nota_media) * 100
+  )
+)
+
+knitr::kable(
+  tabela_sintese,
+  digits = 2,
+  caption = "Síntese das medidas estatísticas"
+)
+```
+
+### Análise da tabela
+
+As medidas de posição mostram que as duas distribuições apresentam média e mediana bastante próximas.
+
+Para as faltas, a média foi **8,01** e a mediana **8**. Para as notas, a média foi **6,44** e a mediana **6,5**.
+
+Entretanto, as medidas de dispersão mostram diferenças importantes. O coeficiente de variação das faltas foi aproximadamente **34,93%**, enquanto para as notas foi aproximadamente **29,21%**.
+
+Portanto, quando a variabilidade é analisada em relação ao tamanho da média de cada variável, **as faltas apresentam maior dispersão relativa**.
+
+# Discussão dos resultados
+
+## Média versus mediana
+
+Se fosse necessário escolher apenas uma medida para representar o comportamento típico das notas dos alunos, seria razoável utilizar a **mediana**.
+
+Embora a média, igual a aproximadamente **6,44**, e a mediana, igual a **6,5**, sejam muito próximas, existem algumas notas extremamente baixas identificadas pelo boxplot. A mediana possui a vantagem de ser menos sensível a esses valores extremos.
+
+Isso não significa que a média seja inadequada. Neste banco de dados, ambas fornecem uma representação semelhante do centro da distribuição. A escolha da mediana, entretanto, oferece maior resistência à influência de valores discrepantes.
+
+## O efeito da variabilidade
+
+A comparação entre grupos demonstra por que a análise apenas das médias pode produzir uma descrição incompleta.
+
+Por exemplo, os grupos de escolaridade da mãe apresentam médias relativamente próximas. Entretanto, o grupo Superior apresentou desvio-padrão de aproximadamente **2,05** e coeficiente de variação de aproximadamente **32,01%**, superiores aos observados nos grupos Fundamental e Médio.
+
+Portanto, dois grupos podem apresentar centros semelhantes e, ao mesmo tempo, possuir graus diferentes de dispersão.
+
+As medidas de variabilidade permitem identificar essas diferenças e complementam as informações fornecidas pela média.
+
+## Medida mais adequada em diferentes situações
+
+**a) Identificar o desempenho médio dos alunos**
+
+A medida mais adequada é a **média aritmética**, pois utiliza todas as notas e representa o desempenho médio do conjunto.
+
+**b) Identificar o desempenho típico quando existem valores extremos**
+
+A **mediana** é mais adequada, pois apresenta menor sensibilidade a valores muito altos ou muito baixos.
+
+**c) Avaliar a dispersão das notas**
+
+O **desvio-padrão** é uma medida adequada porque expressa a dispersão na mesma unidade das notas. A amplitude interquartil também é útil quando se deseja uma medida menos afetada por extremos.
+
+**d) Comparar a variabilidade de duas variáveis com escalas diferentes**
+
+O **coeficiente de variação** é mais adequado, pois relaciona o desvio-padrão à média e apresenta a dispersão em termos percentuais.
+
+**e) Identificar a posição de um aluno em relação aos demais**
+
+Os **percentis** são particularmente úteis, pois indicam a posição relativa de uma observação dentro da distribuição.
+
+## Síntese e reflexão
+
+### 1. Qual medida de posição melhor representa as notas médias dos alunos?
+
+A **mediana**, igual a **6,5**, é uma boa representação do comportamento típico das notas, principalmente porque há alguns valores baixos considerados discrepantes.
+
+Entretanto, como a média é aproximadamente **6,44**, muito próxima da mediana, ambas fornecem informações coerentes sobre o centro da distribuição.
+
+### 2. Qual medida melhor representa o número de faltas?
+
+A mediana, igual a **8**, representa adequadamente o número típico de faltas e possui a vantagem de não ser fortemente influenciada pelos poucos valores elevados de 17 e 19 faltas.
+
+Novamente, a média de **8,01** é praticamente igual à mediana, indicando estabilidade do centro da distribuição.
+
+### 3. Qual variável apresenta maior variabilidade relativa?
+
+O número de faltas apresenta maior variabilidade relativa.
+
+Seu coeficiente de variação foi aproximadamente **34,93%**, enquanto o coeficiente de variação das notas foi aproximadamente **29,21%**.
+
+### 4. A análise da dispersão modificou conclusões baseadas apenas na média?
+
+Sim. As medidas de dispersão permitiram identificar diferenças que não seriam percebidas observando apenas as médias.
+
+Na comparação segundo a escolaridade materna, por exemplo, os grupos possuem médias relativamente semelhantes, porém o grupo Superior apresentou maior variabilidade nas notas.
+
+Portanto, duas distribuições podem possuir centros semelhantes e comportamentos diferentes quanto à dispersão.
+
+### 5. Quais diferenças foram observadas entre os grupos?
+
+Os grupos com e sem acesso à internet apresentaram valores muito semelhantes tanto nas medidas de posição quanto nas medidas de dispersão.
+
+Na comparação segundo a escolaridade da mãe, as médias também foram próximas, mas o grupo Superior apresentou maior variabilidade.
+
+Em relação às faltas segundo o turno, as médias e medianas foram praticamente iguais, embora o turno Vespertino tenha apresentado uma dispersão ligeiramente maior.
+
+### 6. Quais cuidados devem ser tomados ao interpretar essas diferenças?
+
+Diferenças numéricas pequenas não devem ser automaticamente consideradas relevantes.
+
+Também é importante observar o tamanho dos grupos, possíveis valores extremos e diferentes medidas de dispersão.
+
+Além disso, as análises realizadas neste relatório são predominantemente descritivas e mostram como os dados se comportam, mas não demonstram relações causais.
+
+### 7. Quais limitações devem ser consideradas antes de atribuir o desempenho às características sociofamiliares?
+
+A escolaridade da mãe e o acesso à internet representam apenas algumas das muitas características que podem estar relacionadas ao desempenho escolar.
+
+Outros fatores, como renda familiar, hábitos de estudo, motivação, frequência, condições escolares, acompanhamento familiar e características individuais, não foram considerados.
+
+Além disso, diferenças observadas entre grupos representam **descrições estatísticas e possíveis associações**, e não evidência de que uma variável seja responsável pela outra.
+
+# Conclusões
+
+O Relatório 03 permitiu aprofundar a análise descritiva do banco de dados por meio de medidas de posição e de dispersão.
+
+A análise mostrou que o número médio de faltas foi aproximadamente **8,01**, com mediana igual a **8**, enquanto a nota média foi aproximadamente **6,44**, com mediana igual a **6,5**.
+
+Em ambas as variáveis, a proximidade entre média e mediana indica que as medidas centrais apresentam resultados semelhantes.
+
+Entretanto, as medidas de dispersão acrescentaram informações importantes. O coeficiente de variação mostrou que o número de faltas possui maior variabilidade relativa que as notas.
+
+As comparações entre subgrupos também mostraram a importância de analisar simultaneamente centro e dispersão. Grupos com médias semelhantes podem apresentar diferentes graus de variabilidade.
+
+Dessa forma, a análise reforça que uma descrição estatística adequada não deve depender de uma única medida, mas da utilização conjunta de medidas de posição, medidas de dispersão e representações gráficas.
+
+# Limitações da análise
+
+O banco de dados utilizado foi construído para simular uma situação de pesquisa em uma escola pública e possui finalidade pedagógica. Dessa forma, os resultados não devem ser generalizados diretamente para outras escolas ou para toda a população estudantil.
+
+Além disso, o banco contém apenas cinco variáveis, não contemplando toda a complexidade dos fatores relacionados ao desempenho acadêmico.
+
+As análises realizadas neste relatório são essencialmente descritivas. Portanto, diferenças entre médias, medianas ou medidas de dispersão não permitem estabelecer relações de causa e efeito.
+
+Também é necessário considerar que os grupos possuem tamanhos diferentes e que alguns valores extremos podem influenciar determinadas medidas.
+
+Assim, os resultados devem ser interpretados como uma descrição do banco analisado, distinguindo claramente **descrição estatística, associação e causalidade**.
+
+# Código R utilizado
+
+Os principais procedimentos estatísticos utilizados no relatório foram realizados com funções da linguagem R. Entre os principais comandos empregados estão:
+
+```{r, eval=FALSE}
+# Importação
+dados_alunos <- read.table(
+  "dados_alunos.csv",
+  header = TRUE,
+  sep = ";",
+  dec = ",",
+  stringsAsFactors = FALSE
+)
+
+# Medidas de posição
+mean(dados_alunos$faltas)
+median(dados_alunos$faltas)
+quantile(dados_alunos$faltas)
+
+mean(dados_alunos$nota_media)
+median(dados_alunos$nota_media)
+quantile(dados_alunos$nota_media)
+
+# Medidas de dispersão
+var(dados_alunos$faltas)
+sd(dados_alunos$faltas)
+IQR(dados_alunos$faltas)
+
+var(dados_alunos$nota_media)
+sd(dados_alunos$nota_media)
+IQR(dados_alunos$nota_media)
+
+# Coeficiente de variação
+sd(dados_alunos$faltas) / mean(dados_alunos$faltas) * 100
+sd(dados_alunos$nota_media) / mean(dados_alunos$nota_media) * 100
+
+# Comparações por grupos
+by(
+  dados_alunos$nota_media,
+  dados_alunos$acesso_internet,
+  resumo_estatistico
+)
+
+by(
+  dados_alunos$nota_media,
+  dados_alunos$escolaridade_mae,
+  resumo_estatistico
+)
+
+by(
+  dados_alunos$faltas,
+  dados_alunos$turno,
+  resumo_estatistico
+)
+
+# Representações gráficas
+boxplot(dados_alunos$nota_media)
+boxplot(dados_alunos$faltas)
+
+boxplot(nota_media ~ acesso_internet, data = dados_alunos)
+boxplot(nota_media ~ escolaridade_mae, data = dados_alunos)
+boxplot(nota_media ~ turno, data = dados_alunos)
+```
