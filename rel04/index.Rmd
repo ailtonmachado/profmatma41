@@ -1,0 +1,772 @@
+---
+title: "Relatório 04 - Fundamentos de Probabilidade"
+author: "Ailton Machado"
+date: "24/09/2026"
+output:
+  bookdown::html_document2:
+    theme: journal
+    highlight: tango
+    toc: true
+    number_sections: true
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+# Introdução
+
+A probabilidade fornece uma linguagem matemática para estudar situações em que o resultado de um experimento não pode ser previsto com certeza. Em vez de indicar exatamente o que acontecerá em uma realização específica, ela permite quantificar o grau de incerteza associado aos diferentes resultados possíveis.
+
+Neste relatório são apresentados os principais conceitos estudados na teoria elementar das probabilidades: espaço amostral, eventos e operações entre eventos, axiomas de Kolmogorov, propriedades decorrentes desses axiomas, independência, Teorema da Probabilidade Total e Teorema de Bayes. O objetivo não é apenas registrar definições, mas mostrar como elas se relacionam, demonstrar resultados importantes e discutir seu potencial didático na Educação Básica.
+
+Ao final, os conceitos são aplicados à situação-problema **"O teste da Doença Rara na Escola"**, na qual se deseja determinar a probabilidade de um estudante realmente estar doente após receber um resultado positivo em um teste diagnóstico.
+
+# Conceitos básicos de conjuntos no contexto probabilístico
+
+## Espaço amostral
+
+O **espaço amostral**, representado por \(\Omega\), é o conjunto de todos os resultados possíveis de um experimento aleatório.
+
+Por exemplo, no lançamento de um dado comum,
+
+\[
+\Omega=\{1,2,3,4,5,6\}.
+\]
+
+No lançamento de duas moedas, considerando C para cara e K para coroa,
+
+\[
+\Omega=\{CC,CK,KC,KK\}.
+\]
+
+O espaço amostral deve ser definido de acordo com aquilo que se pretende observar. Em alguns problemas é suficiente registrar apenas uma característica do resultado; em outros, é necessário descrever todos os resultados elementares.
+
+## Eventos
+
+Um **evento** é um subconjunto do espaço amostral. Assim, um evento reúne os resultados que possuem determinada característica de interesse.
+
+No lançamento de um dado, considere o evento
+
+\[
+A=\{2,4,6\},
+\]
+
+que representa "obter um número par".
+
+Já
+
+\[
+B=\{4,5,6\}
+\]
+
+pode representar "obter um número maior que 3".
+
+Quando o resultado observado pertence ao conjunto que define um evento, dizemos que o evento ocorreu.
+
+## Operações entre eventos
+
+As operações entre conjuntos permitem construir novos eventos.
+
+A **união** \(A\cup B\) representa a ocorrência de pelo menos um dos eventos. No exemplo anterior,
+
+\[
+A\cup B=\{2,4,5,6\}.
+\]
+
+A **interseção** \(A\cap B\) representa a ocorrência simultânea dos dois eventos:
+
+\[
+A\cap B=\{4,6\}.
+\]
+
+O **complementar** de \(A\), indicado por \(A^c\), reúne os resultados de \(\Omega\) que não pertencem a \(A\). Portanto,
+
+\[
+A^c=\{1,3,5\}.
+\]
+
+A **diferença** \(A\setminus B\) contém os resultados que pertencem a \(A\), mas não a \(B\).
+
+## Eventos mutuamente exclusivos
+
+Dois eventos são **mutuamente exclusivos** ou **disjuntos** quando não podem ocorrer simultaneamente. Formalmente,
+
+\[
+A\cap B=\varnothing.
+\]
+
+Por exemplo, no lançamento de um dado, os eventos
+
+\[
+A=\{1,2\}\quad\text{e}\quad B=\{5,6\}
+\]
+
+são mutuamente exclusivos.
+
+Como contraexemplo, os eventos "resultado par" e "resultado maior que 3" não são mutuamente exclusivos, pois 4 e 6 pertencem aos dois eventos.
+
+## Reflexão para a Educação Básica
+
+Na Educação Básica, a linguagem de conjuntos ajuda a tornar visíveis as relações entre eventos. Diagramas de Venn, lançamentos de dados e moedas e experimentos com cartas permitem que os estudantes compreendam união, interseção e complementar antes de trabalhar com fórmulas. Essa abordagem reduz a probabilidade a uma estrutura lógica que pode ser explorada concretamente.
+
+# Axiomas de Kolmogorov
+
+A probabilidade pode ser entendida como uma função \(P\) que associa a cada evento \(A\) um número real \(P(A)\). Em espaços amostrais finitos ou enumeráveis, trabalharemos com três axiomas fundamentais.
+
+## Primeiro axioma: não negatividade
+
+Para todo evento \(A\),
+
+\[
+P(A)\geq 0.
+\]
+
+Portanto, uma probabilidade nunca pode ser negativa.
+
+## Segundo axioma: normalização
+
+A probabilidade do espaço amostral é igual a 1:
+
+\[
+P(\Omega)=1.
+\]
+
+Isso significa que algum resultado possível do experimento necessariamente ocorrerá.
+
+## Terceiro axioma: aditividade para eventos disjuntos
+
+Se \(A_1,A_2,\ldots\) são eventos dois a dois disjuntos, então
+
+\[
+P\left(\bigcup_i A_i\right)=\sum_i P(A_i).
+\]
+
+No caso de dois eventos disjuntos,
+
+\[
+P(A\cup B)=P(A)+P(B).
+\]
+
+### Exemplo
+
+Em um dado equilibrado, considere
+
+\[
+A=\{1,2\},\qquad B=\{5,6\}.
+\]
+
+Como \(A\cap B=\varnothing\),
+
+\[
+P(A\cup B)=\frac{2}{6}+\frac{2}{6}=\frac{4}{6}=\frac{2}{3}.
+\]
+
+Esses axiomas são suficientes para deduzir várias propriedades importantes da probabilidade.
+
+# Propriedades de probabilidade
+
+## Probabilidade do evento impossível
+
+Como
+
+\[
+\Omega=\Omega\cup\varnothing
+\]
+
+é uma união disjunta, pelo terceiro axioma,
+
+\[
+P(\Omega)=P(\Omega)+P(\varnothing).
+\]
+
+Como \(P(\Omega)=1\), segue que
+
+\[
+P(\varnothing)=0.
+\]
+
+## Probabilidade do complementar
+
+Como \(A\) e \(A^c\) são disjuntos e
+
+\[
+A\cup A^c=\Omega,
+\]
+
+temos
+
+\[
+P(A)+P(A^c)=1.
+\]
+
+Logo,
+
+\[
+\boxed{P(A^c)=1-P(A)}.
+\]
+
+### Exemplo
+
+Se a probabilidade de um aluno faltar a uma atividade é 0,12, então a probabilidade de ele não faltar é
+
+\[
+1-0,12=0,88.
+\]
+
+## Monotonicidade
+
+Se \(A\subseteq B\), então
+
+\[
+P(A)\leq P(B).
+\]
+
+De fato, podemos escrever
+
+\[
+B=A\cup(B\setminus A),
+\]
+
+com união disjunta. Portanto,
+
+\[
+P(B)=P(A)+P(B\setminus A).
+\]
+
+Como \(P(B\setminus A)\geq 0\), concluímos que
+
+\[
+P(B)\geq P(A).
+\]
+
+## Probabilidade de uma diferença
+
+Se \(A\subseteq B\), então
+
+\[
+P(B\setminus A)=P(B)-P(A).
+\]
+
+Esse resultado decorre diretamente da decomposição disjunta
+
+\[
+B=A\cup(B\setminus A).
+\]
+
+## Aditividade para eventos não disjuntos
+
+Se \(A\) e \(B\) podem ocorrer simultaneamente, somar \(P(A)\) e \(P(B)\) conta a interseção duas vezes. Por isso,
+
+\[
+\boxed{P(A\cup B)=P(A)+P(B)-P(A\cap B)}.
+\]
+
+### Demonstração
+
+Podemos escrever
+
+\[
+A\cup B=A\cup(B\setminus A),
+\]
+
+com união disjunta. Logo,
+
+\[
+P(A\cup B)=P(A)+P(B\setminus A).
+\]
+
+Por outro lado,
+
+\[
+B=(A\cap B)\cup(B\setminus A),
+\]
+
+também de forma disjunta. Portanto,
+
+\[
+P(B)=P(A\cap B)+P(B\setminus A),
+\]
+
+e assim
+
+\[
+P(B\setminus A)=P(B)-P(A\cap B).
+\]
+
+Substituindo,
+
+\[
+P(A\cup B)=P(A)+P(B)-P(A\cap B).
+\]
+
+### Exemplo
+
+Em um dado equilibrado, seja
+
+\[
+A=\{2,4,6\},\qquad B=\{4,5,6\}.
+\]
+
+Temos
+
+\[
+P(A)=\frac{3}{6},\quad P(B)=\frac{3}{6},\quad P(A\cap B)=\frac{2}{6}.
+\]
+
+Logo,
+
+\[
+P(A\cup B)=\frac{3}{6}+\frac{3}{6}-\frac{2}{6}=\frac{4}{6}=\frac{2}{3}.
+\]
+
+# Probabilidade condicional
+
+A probabilidade condicional de \(A\) dado que \(B\) ocorreu é definida, quando \(P(B)>0\), por
+
+\[
+\boxed{P(A\mid B)=\frac{P(A\cap B)}{P(B)}}.
+\]
+
+A ocorrência de \(B\) reduz o universo de referência. Em vez de comparar os casos favoráveis com todo o espaço amostral, passamos a compará-los somente com os casos pertencentes a \(B\).
+
+Da definição segue a regra do produto:
+
+\[
+P(A\cap B)=P(A\mid B)P(B).
+\]
+
+Da mesma forma,
+
+\[
+P(A\cap B)=P(B\mid A)P(A).
+\]
+
+Essa identidade será essencial na demonstração do Teorema de Bayes.
+
+# Independência de eventos
+
+Dois eventos \(A\) e \(B\) são independentes quando a ocorrência de um deles não altera a probabilidade do outro. Formalmente,
+
+\[
+\boxed{P(A\cap B)=P(A)P(B)}.
+\]
+
+Quando \(P(B)>0\), essa condição equivale a
+
+\[
+P(A\mid B)=P(A).
+\]
+
+## Exemplo de eventos independentes
+
+Considere dois lançamentos de uma moeda equilibrada. Seja
+
+\[
+A=\{\text{cara no primeiro lançamento}\}
+\]
+
+e
+
+\[
+B=\{\text{cara no segundo lançamento}\}.
+\]
+
+Temos
+
+\[
+P(A)=\frac12,\qquad P(B)=\frac12
+\]
+
+e
+
+\[
+P(A\cap B)=\frac14.
+\]
+
+Como
+
+\[
+P(A)P(B)=\frac12\cdot\frac12=\frac14,
+\]
+
+os eventos são independentes.
+
+## Independência não é exclusão mútua
+
+É importante não confundir independência com eventos mutuamente exclusivos.
+
+Se dois eventos \(A\) e \(B\) são mutuamente exclusivos e possuem probabilidades positivas, então
+
+\[
+P(A\cap B)=0,
+\]
+
+mas
+
+\[
+P(A)P(B)>0.
+\]
+
+Logo, eles não podem ser independentes.
+
+### Contraexemplo
+
+Em um dado equilibrado, considere
+
+\[
+A=\{1,2\},\qquad B=\{5,6\}.
+\]
+
+Os eventos são mutuamente exclusivos, mas
+
+\[
+P(A)P(B)=\frac13\cdot\frac13=\frac19\neq 0=P(A\cap B).
+\]
+
+Portanto, não são independentes.
+
+## Independência de múltiplos eventos
+
+Para três eventos \(A\), \(B\) e \(C\), independência mútua exige não apenas independência aos pares, mas também
+
+\[
+P(A\cap B\cap C)=P(A)P(B)P(C).
+\]
+
+De forma geral, todos os produtos associados às interseções dos eventos considerados devem se verificar.
+
+### Contraexemplo: independência aos pares não implica independência mútua
+
+Considere dois lançamentos de uma moeda equilibrada com
+
+\[
+\Omega=\{CC,CK,KC,KK\}.
+\]
+
+Defina:
+
+\[
+A=\{CC,CK\},
+\]
+
+\[
+B=\{CC,KC\},
+\]
+
+\[
+C=\{CC,KK\}.
+\]
+
+Cada evento tem probabilidade \(1/2\), e cada interseção de dois eventos possui probabilidade \(1/4\). Assim, os eventos são independentes aos pares.
+
+Entretanto,
+
+\[
+P(A\cap B\cap C)=P(\{CC\})=\frac14,
+\]
+
+enquanto
+
+\[
+P(A)P(B)P(C)=\frac18.
+\]
+
+Portanto, os três eventos não são mutuamente independentes.
+
+## Reflexão didática
+
+A distinção entre independência e exclusão mútua costuma gerar dificuldades porque, na linguagem cotidiana, "independente" pode sugerir que dois eventos não acontecem juntos. Na probabilidade ocorre quase o contrário: dois eventos mutuamente exclusivos com probabilidade positiva são necessariamente dependentes. Experimentos com moedas e dados são bons recursos para tornar essa diferença concreta.
+
+# Teorema da Probabilidade Total
+
+## Partição do espaço amostral
+
+Os eventos \(B_1,B_2,\ldots,B_n\) formam uma partição de \(\Omega\) quando:
+
+1. são dois a dois disjuntos;
+2. sua união é todo o espaço amostral;
+3. cada um possui probabilidade positiva para que as probabilidades condicionais utilizadas estejam definidas.
+
+Assim,
+
+\[
+B_i\cap B_j=\varnothing\quad (i\neq j)
+\]
+
+e
+
+\[
+\bigcup_{i=1}^{n}B_i=\Omega.
+\]
+
+## Enunciado
+
+Se \(B_1,\ldots,B_n\) formam uma partição de \(\Omega\), então, para qualquer evento \(A\),
+
+\[
+\boxed{P(A)=\sum_{i=1}^{n}P(A\mid B_i)P(B_i)}.
+\]
+
+## Demonstração
+
+Como os \(B_i\) formam uma partição,
+
+\[
+A=A\cap\Omega=A\cap\left(\bigcup_{i=1}^{n}B_i\right).
+\]
+
+Logo,
+
+\[
+A=\bigcup_{i=1}^{n}(A\cap B_i).
+\]
+
+Como os \(B_i\) são disjuntos, os eventos \(A\cap B_i\) também são disjuntos. Portanto,
+
+\[
+P(A)=\sum_{i=1}^{n}P(A\cap B_i).
+\]
+
+Pela definição de probabilidade condicional,
+
+\[
+P(A\cap B_i)=P(A\mid B_i)P(B_i).
+\]
+
+Substituindo,
+
+\[
+\boxed{P(A)=\sum_{i=1}^{n}P(A\mid B_i)P(B_i)}.
+\]
+
+## Exemplo próprio
+
+Suponha que 60% dos alunos de uma escola estudem pela manhã e 40% à tarde. A probabilidade de chegar atrasado é 5% entre os alunos da manhã e 8% entre os alunos da tarde.
+
+Se \(A\) representa "chegar atrasado", \(M\) o turno da manhã e \(T\) o turno da tarde, então
+
+\[
+P(A)=P(A\mid M)P(M)+P(A\mid T)P(T).
+\]
+
+Logo,
+
+\[
+P(A)=0,05\cdot0,60+0,08\cdot0,40=0,062.
+\]
+
+Portanto, a probabilidade de um aluno escolhido ao acaso chegar atrasado é 6,2%.
+
+# Teorema de Bayes
+
+## Enunciado
+
+Se \(B_1,\ldots,B_n\) formam uma partição do espaço amostral e \(P(A)>0\), então
+
+\[
+\boxed{P(B_j\mid A)=\frac{P(A\mid B_j)P(B_j)}{\sum_{i=1}^{n}P(A\mid B_i)P(B_i)}}.
+\]
+
+O Teorema de Bayes permite atualizar uma probabilidade inicial após a obtenção de uma nova informação.
+
+## Demonstração
+
+Pela definição de probabilidade condicional,
+
+\[
+P(B_j\mid A)=\frac{P(A\cap B_j)}{P(A)}.
+\]
+
+Pela regra do produto,
+
+\[
+P(A\cap B_j)=P(A\mid B_j)P(B_j).
+\]
+
+Pelo Teorema da Probabilidade Total,
+
+\[
+P(A)=\sum_{i=1}^{n}P(A\mid B_i)P(B_i).
+\]
+
+Portanto,
+
+\[
+P(B_j\mid A)=\frac{P(A\mid B_j)P(B_j)}{\sum_{i=1}^{n}P(A\mid B_i)P(B_i)}.
+\]
+
+## Interpretação
+
+No contexto de Bayes, \(P(B_j)\) pode ser entendida como uma probabilidade inicial, anterior à nova informação. Após observar o evento \(A\), essa informação é atualizada e obtemos \(P(B_j\mid A)\).
+
+Esse mecanismo é especialmente importante em testes diagnósticos, pois a probabilidade de estar doente depois de um teste positivo depende não apenas da qualidade do teste, mas também da frequência da doença na população.
+
+# Situação-problema: O teste da Doença Rara na Escola
+
+Uma escola possui 1.200 estudantes. A doença afeta 1 em cada 100 estudantes. Portanto,
+
+\[
+P(D)=0,01
+\]
+
+e
+
+\[
+P(D^c)=0,99.
+\]
+
+A sensibilidade do teste é 90%, isto é,
+
+\[
+P(+\mid D)=0,90.
+\]
+
+A especificidade é 95%, ou seja,
+
+\[
+P(-\mid D^c)=0,95.
+\]
+
+Logo, a taxa de falso positivo é
+
+\[
+P(+\mid D^c)=1-0,95=0,05.
+\]
+
+Queremos determinar
+
+\[
+P(D\mid +).
+\]
+
+## Passo 1: probabilidade de um resultado positivo
+
+Aplicando o Teorema da Probabilidade Total,
+
+\[
+P(+)=P(+\mid D)P(D)+P(+\mid D^c)P(D^c).
+\]
+
+Substituindo os valores,
+
+\[
+P(+)=0,90\cdot0,01+0,05\cdot0,99.
+\]
+
+Portanto,
+
+\[
+P(+)=0,009+0,0495=0,0585.
+\]
+
+Assim, aproximadamente 5,85% dos estudantes testariam positivo.
+
+## Passo 2: aplicação do Teorema de Bayes
+
+\[
+P(D\mid +)=\frac{P(+\mid D)P(D)}{P(+)}.
+\]
+
+Logo,
+
+\[
+P(D\mid +)=\frac{0,90\cdot0,01}{0,0585}.
+\]
+
+Assim,
+
+\[
+P(D\mid +)=\frac{0,009}{0,0585}\approx0,1538.
+\]
+
+Portanto,
+
+\[
+\boxed{P(D\mid +)\approx15,38\%}.
+\]
+
+A probabilidade de o estudante realmente ter a doença, mesmo depois de testar positivo, é de aproximadamente **15,38%**.
+
+## Interpretação usando frequências esperadas
+
+Entre 1.200 estudantes, espera-se que aproximadamente
+
+\[
+1200\cdot0,01=12
+\]
+
+tenham a doença.
+
+Entre esses 12, o teste identificaria positivamente, em média,
+
+\[
+12\cdot0,90=10,8.
+\]
+
+Os outros 1.188 estudantes não teriam a doença. Entre eles, aproximadamente 5% teriam falso positivo:
+
+\[
+1188\cdot0,05=59,4.
+\]
+
+Assim, entre os resultados positivos teríamos, em termos esperados,
+
+\[
+10,8+59,4=70,2
+\]
+
+resultados positivos, dos quais apenas 10,8 corresponderiam a estudantes realmente doentes.
+
+A proporção é
+
+\[
+\frac{10,8}{70,2}\approx0,1538=15,38\%.
+\]
+
+Os valores decimais representam frequências esperadas. Para uma interpretação com números inteiros, podemos imaginar uma população maior com as mesmas proporções.
+
+## Por que 90% é uma resposta equivocada?
+
+O valor de 90% corresponde à **sensibilidade** do teste:
+
+\[
+P(+\mid D)=0,90.
+\]
+
+Entretanto, a pergunta deseja
+
+\[
+P(D\mid +),
+\]
+
+que é uma probabilidade diferente.
+
+Confundir essas duas probabilidades significa inverter a condição. Saber que 90% dos doentes testam positivo não implica que 90% das pessoas que testam positivo estejam doentes.
+
+Como a doença é rara, existem muitos mais estudantes saudáveis do que doentes. Mesmo uma taxa relativamente pequena de falsos positivos, aplicada ao grande grupo de estudantes saudáveis, produz um número de falsos positivos muito maior que o número de verdadeiros positivos. Por isso, a probabilidade posterior é apenas cerca de 15,38%.
+
+Esse resultado pode parecer contraintuitivo e mostra a importância da **taxa-base** ou prevalência na interpretação de testes diagnósticos.
+
+# Aplicações na Educação Básica
+
+O estudo de probabilidade pode ser desenvolvido na Educação Básica de maneira investigativa. Experimentos com dados, moedas, cartas e simulações permitem que os alunos construam intuitivamente ideias como espaço amostral, evento, frequência relativa e independência.
+
+O Teorema da Probabilidade Total e o Teorema de Bayes podem ser apresentados por meio de árvores de probabilidade, tabelas de contingência e problemas envolvendo testes diagnósticos. A situação da doença rara é especialmente rica porque mostra que porcentagens não devem ser interpretadas isoladamente.
+
+Uma possibilidade didática seria pedir aos estudantes que representassem uma população fictícia de 10.000 pessoas. Com prevalência de 1%, teríamos 100 doentes e 9.900 não doentes. Aplicando sensibilidade e especificidade, surgiriam 90 verdadeiros positivos e 495 falsos positivos. Assim, entre 585 resultados positivos, apenas 90 corresponderiam a doentes:
+
+\[
+\frac{90}{585}\approx15,38\%.
+\]
+
+Essa representação por frequências naturais tende a tornar o resultado mais intuitivo do que a aplicação direta da fórmula.
+
+Além do conteúdo matemático, problemas como esse contribuem para o desenvolvimento do pensamento crítico, pois ajudam o estudante a interpretar informações sobre testes médicos, pesquisas, notícias e riscos, evitando conclusões baseadas apenas em uma porcentagem isolada.
+
+# Considerações finais
+
+Os conceitos apresentados neste relatório formam uma sequência lógica. A linguagem de conjuntos permite organizar eventos; os axiomas de Kolmogorov fornecem a base formal da medida de probabilidade; as propriedades decorrem desses axiomas; a probabilidade condicional permite incorporar informações; a independência descreve situações em que a ocorrência de um evento não altera a probabilidade de outro; e os teoremas da Probabilidade Total e de Bayes possibilitam decompor e atualizar probabilidades.
+
+A situação-problema mostra que o Teorema de Bayes não é apenas uma fórmula algébrica. Ele oferece uma maneira de raciocinar quando uma informação nova precisa ser combinada com uma probabilidade anterior. No caso analisado, embora o teste tenha sensibilidade de 90%, um resultado positivo produz uma probabilidade de aproximadamente 15,38% de o estudante estar realmente doente, devido à baixa prevalência da doença e à presença de falsos positivos.
+
+Do ponto de vista educacional, esse tipo de problema evidencia a importância de desenvolver a alfabetização probabilística. Compreender probabilidades condicionais, taxas-base e independência ajuda o estudante a interpretar situações reais com mais precisão e a distinguir intuição de argumento matemático.

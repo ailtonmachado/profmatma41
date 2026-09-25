@@ -167,3 +167,4 @@ Relatórios desenvolvidos:
 - [Relatório 01 - Criação e Publicação da Página Web](rel01/index.html){target="_blank"}
 - [Relatório 02 - Análise Estatística de Dados Escolares](rel02/index.html){target="_blank"}
 - [Relatório 03 - Medidas de Posição e Dispersão](rel03/index.html){target="_blank"}
+- [Relatório 04 - Fundamentos de Probabilidade](rel04/index.html){target="_blank"}
